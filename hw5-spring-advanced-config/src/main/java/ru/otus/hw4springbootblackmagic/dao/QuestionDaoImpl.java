@@ -56,10 +56,9 @@ public class QuestionDaoImpl implements QuestionDao {
         question.setQuestion(this.i18nService.getMessage(lineArray[0]));
 
         List<String> answers = new ArrayList<>();
-        answers.add(lineArray[1]);
-        answers.add(lineArray[2]);
-        answers.add(lineArray[3]);
-        answers.add(lineArray[4]);
+        for (int i = 1; i < 5; i++) {
+            answers.add(lineArray[i]);
+        }
         question.setAnswers(answers);
 
         question.setCorrectAnswer(lineArray[5]);
