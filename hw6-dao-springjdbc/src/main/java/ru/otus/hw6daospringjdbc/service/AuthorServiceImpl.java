@@ -19,4 +19,9 @@ public class AuthorServiceImpl implements AuthorService {
     public List<Author> getAll() {
         return this.authorsDao.getAll();
     }
+
+    @Override
+    public void insert(String authorName) {
+        this.authorsDao.insert(authorName);
+    }
 }

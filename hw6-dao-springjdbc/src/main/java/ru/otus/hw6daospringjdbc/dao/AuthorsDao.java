@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface AuthorsDao {
 
+    int countByName(String name);
+
+    int insert(String name);
+
     Author getById(long id) throws SQLException;
 
     Author getByName(String name) throws SQLException;

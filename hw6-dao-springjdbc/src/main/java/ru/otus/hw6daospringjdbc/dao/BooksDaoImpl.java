@@ -1,7 +1,11 @@
 package ru.otus.hw6daospringjdbc.dao;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw6daospringjdbc.domain.Author;
@@ -10,8 +14,10 @@ import ru.otus.hw6daospringjdbc.domain.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class BooksDaoImpl implements BooksDao {
@@ -28,31 +34,38 @@ public class BooksDaoImpl implements BooksDao {
     }
 
     @Override
-    @Transactional
+    //@Transactional
     public void insert(Book book) {
 
-        final HashMap<String, Object> bookParams = new HashMap<>(1);
-        bookParams.put("bookTitle", book.getTitle());
-        jdbc.update("insert into books values (:title)", bookParams);
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        SqlParameterSource sqlParms =
+                new MapSqlParameterSource().addValue("bookTitle", book.getTitle());
+        jdbc.update("insert into books (title) values (:bookTitle)", sqlParms,  keyHolder, new String[]{"id"});
+
+        int bookId = keyHolder.getKey().intValue();
+        book.setId(bookId);
+
 
         for (Genre genre: book.getGenres()){
-            HashMap<String, Object> bookGenresParams = new HashMap<>(1);
-            bookParams.put("bookId", book.getId());
-            bookParams.put("genreId", genre.getId());
-            jdbc.update("insert into books_genres values (:bookId, :genreId)", bookParams);
+            Map<String, Object> bookGenresParams = new HashMap<>(2);
+            bookGenresParams.put("bookId", book.getId());
+            bookGenresParams.put("genreId", genre.getId());
+            jdbc.update("insert into books_genres (book_id,genre_id) values (:bookId, :genreId)", bookGenresParams);
         }
 
-        HashMap<String, Object> bookAuthorsParams = new HashMap<>(1);
-        bookParams.put("bookId", book.getId());
-        bookParams.put("authorId", book.getAuthor().getId());
-        jdbc.update("insert into books_genres values (:bookId, :genreId)", bookParams);
+
+        System.out.println("Book to insert = " + book);
+        Map<String, Object> bookAuthorsParams = new HashMap<>(2);
+        bookAuthorsParams.put("bookId", book.getId());
+        bookAuthorsParams.put("authorId", book.getAuthor().getId());
+        jdbc.update("insert into books_authors (book_id,author_id) values (:bookId, :authorId)", bookAuthorsParams);
 
     }
 
     @Override
     public Book getById(long id) throws SQLException {
-        final HashMap<String, Object> params = new HashMap<>(1);
-        params.put("bookId", id);
+        final Map<String, Object> params = Collections.singletonMap("bookId", id);
 
         List<Book> booksList = jdbc.query("select * from books where id = :bookId", params, new BookMapper());
 
@@ -66,15 +79,13 @@ public class BooksDaoImpl implements BooksDao {
 
     @Override
     public List<Book> getBooksByGenre(Genre genre) {
-        final HashMap<String, Object> params = new HashMap<>(1);
-        params.put("genreId", genre.getId());
+        final Map<String, Object> params = Collections.singletonMap("genreId", genre.getId());
         return jdbc.query("select * from books inner join books_genres on books.id=books_genres.book_id where books_genres.genre_id = :genreId", params, new BookMapper());
     }
 
     @Override
     public List<Book> getBooksByAuthor(Author author) {
-        final HashMap<String, Object> params = new HashMap<>(1);
-        params.put("authorId", author.getId());
+        final Map<String, Object> params = Collections.singletonMap("authorId", author.getId());
         return jdbc.query("select * from books inner join books_authors on books.id=books_authors.book_id where books_authors.author_id = :authorId", params, new BookMapper());
     }
 

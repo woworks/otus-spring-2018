@@ -2,6 +2,7 @@ package ru.otus.hw6daospringjdbc.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw6daospringjdbc.dao.AuthorsDao;
 import ru.otus.hw6daospringjdbc.dao.BooksDao;
 import ru.otus.hw6daospringjdbc.dao.GenresDao;
@@ -10,6 +11,7 @@ import ru.otus.hw6daospringjdbc.domain.Book;
 import ru.otus.hw6daospringjdbc.domain.Genre;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,9 +81,41 @@ public class BookServiceImpl implements BookService {
         return this.enrichBooks(books);
     }
 
+
     @Override
+    //@Transactional
     public void insert(Book book) {
 
+
+        System.out.println("autjors = " + this.authorsDao.getAll());
+
+
+        if (this.authorsDao.countByName(book.getAuthor().getName()) == 0) {
+            int authorId = this.authorsDao.insert(book.getAuthor().getName());
+             book.getAuthor().setId(authorId);
+        } else {
+            try {
+                book.getAuthor().setId(this.authorsDao.getByName(book.getAuthor().getName()).getId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println("AUTH = " + book.getAuthor().getId());
+
+        for (Genre genre: book.getGenres()) {
+            if (this.genresDao.countByName(genre.getName()) == 0) {
+                genre.setId(this.genresDao.insert(genre.getName()));
+            } else {
+                try {
+                    genre.setId(this.genresDao.getByName(genre.getName()).getId());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        this.booksDao.insert(book);
     }
 
     @Override

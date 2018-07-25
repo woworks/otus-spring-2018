@@ -1,22 +1,26 @@
 package ru.otus.hw6daospringjdbc.domain;
 
 public class Author {
-    private long id;
+    private int id;
     private String name;
 
     public Author() {
     }
 
-    public Author(long id, String name) {
+    public Author(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public long getId() {
+    public Author(String name) {
+        this.name = name;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -26,5 +30,13 @@ public class Author {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

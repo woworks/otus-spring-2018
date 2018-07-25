@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface GenresDao {
 
+    int countByName(String name);
+
+    int insert(String name);
 
     Genre getById(long id) throws SQLException;
 

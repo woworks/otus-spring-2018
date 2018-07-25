@@ -1,14 +1,20 @@
 package ru.otus.hw6daospringjdbc.dao;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.otus.hw6daospringjdbc.domain.Author;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class AuthorsDaoImpl implements AuthorsDao {
@@ -20,10 +26,25 @@ public class AuthorsDaoImpl implements AuthorsDao {
     }
 
     @Override
+    public int countByName(String name) {
+        final Map<String, Object> params = Collections.singletonMap("authorName", name);
+        return jdbc.queryForObject("select count(*) from authors where name=:authorName", params, Integer.class);
+    }
+
+    @Override
+    public int insert(String name) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        SqlParameterSource sqlParms =
+                new MapSqlParameterSource().addValue("authorName", name);
+        jdbc.update("insert into authors (name) values (:authorName)", sqlParms,  keyHolder, new String[]{"id"});
+
+        return keyHolder.getKey().intValue();
+    }
+
+    @Override
     public Author getById(long id) throws SQLException {
 
-        final HashMap<String, Object> params = new HashMap<>(1);
-        params.put("authorId", id);
+        final Map<String, Object> params = Collections.singletonMap("authorId", id);
 
         List<Author> authorsList = jdbc.query("select * from authors where id = :authorId", params, new AuthorMapper());
 
@@ -43,8 +64,7 @@ public class AuthorsDaoImpl implements AuthorsDao {
     @Override
     public Author getAuthorByBookId(long id) {
 
-        final HashMap<String, Object> params = new HashMap<>(1);
-        params.put("bookId", id);
+        final Map<String, Object> params = Collections.singletonMap("bookId", id);
 
         List<Author> authorsList = jdbc.query("select * from authors inner join books_authors on authors.id=books_authors.author_id" +
                 " where books_authors.book_id = :bookId", params, new AuthorMapper());
@@ -59,8 +79,7 @@ public class AuthorsDaoImpl implements AuthorsDao {
 
     @Override
     public Author getByName(String name) throws SQLException {
-        final HashMap<String, Object> params = new HashMap<>(1);
-        params.put("authorName", name);
+        final Map<String, Object> params = Collections.singletonMap("authorName", name);
 
         List<Author> authorsList = jdbc.query("select * from authors where LOWER(name) LIKE LOWER(:authorName)", params, new AuthorMapper());
 
@@ -78,7 +97,7 @@ public class AuthorsDaoImpl implements AuthorsDao {
 
         @Override
         public Author mapRow(ResultSet resultSet, int i) throws SQLException {
-            long id = resultSet.getInt("id");
+            int id = resultSet.getInt("id");
             String name = resultSet.getString("name");
             return new Author(id, name);
         }

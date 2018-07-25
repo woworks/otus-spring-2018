@@ -7,4 +7,6 @@ import java.util.List;
 public interface AuthorService {
 
     List<Author> getAll();
+
+    void insert(String authorName);
 }
