@@ -11,10 +11,7 @@ import ru.otus.hw6daospringjdbc.domain.Author;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class AuthorsDaoImpl implements AuthorsDao {
@@ -62,7 +59,7 @@ public class AuthorsDaoImpl implements AuthorsDao {
     }
 
     @Override
-    public Author getAuthorByBookId(long id) {
+    public Optional<Author> getAuthorByBookId(long id) {
 
         final Map<String, Object> params = Collections.singletonMap("bookId", id);
 
@@ -70,27 +67,27 @@ public class AuthorsDaoImpl implements AuthorsDao {
                 " where books_authors.book_id = :bookId", params, new AuthorMapper());
 
         if (authorsList.isEmpty()) {
-            return null;
+            return Optional.empty();
         } else {
-            return authorsList.get(0);
+            return Optional.of(authorsList.get(0));
         }
 
     }
 
     @Override
-    public Author getByName(String name) throws SQLException {
+    public Optional<Author> getByName(String name) throws SQLException {
         final Map<String, Object> params = Collections.singletonMap("authorName", name);
 
         List<Author> authorsList = jdbc.query("select * from authors where LOWER(name) LIKE LOWER(:authorName)", params, new AuthorMapper());
 
         if (authorsList.isEmpty()) {
             System.out.println("Could not find author with name " + name);
-            return null;
+            return Optional.empty();
         } else if (authorsList.size() > 1) {
             throw new SQLException("More than one author for name " + name);
         }
 
-        return authorsList.get(0);
+        return Optional.of(authorsList.get(0));
     }
 
     private static class AuthorMapper implements RowMapper<Author> {

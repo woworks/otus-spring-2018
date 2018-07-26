@@ -4,6 +4,7 @@ import ru.otus.hw6daospringjdbc.domain.Author;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public interface AuthorsDao {
 
@@ -13,10 +14,10 @@ public interface AuthorsDao {
 
     Author getById(long id) throws SQLException;
 
-    Author getByName(String name) throws SQLException;
+    Optional<Author> getByName(String name) throws SQLException;
 
     List<Author> getAll();
 
-    Author getAuthorByBookId(long id);
+    Optional<Author> getAuthorByBookId(long id);
 
 }

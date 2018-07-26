@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -54,13 +55,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getBooksByAuthor(String name) throws SQLException {
-        Author author = this.authorsDao.getByName(name);
+        Optional<Author> author = this.authorsDao.getByName(name);
 
-        if (author == null) {
+        if (!author.isPresent()) {
             return Collections.emptyList();
         }
 
-        List<Book> books = this.booksDao.getBooksByAuthor(author);
+        List<Book> books = this.booksDao.getBooksByAuthor(author.get());
         return this.enrichBooks(books);
     }
 
@@ -71,13 +72,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getBooksByGenre(String name) throws SQLException {
-        Genre genre = this.genresDao.getByName(name);
+        Optional<Genre> genre = this.genresDao.getByName(name);
 
-        if (genre == null) {
+        if (!genre.isPresent()) {
             return Collections.emptyList();
         }
 
-        List<Book> books = this.booksDao.getBooksByGenre(genre);
+        List<Book> books = this.booksDao.getBooksByGenre(genre.get());
         return this.enrichBooks(books);
     }
 
@@ -86,29 +87,23 @@ public class BookServiceImpl implements BookService {
     //@Transactional
     public void insert(Book book) {
 
-
-        System.out.println("autjors = " + this.authorsDao.getAll());
-
-
         if (this.authorsDao.countByName(book.getAuthor().getName()) == 0) {
             int authorId = this.authorsDao.insert(book.getAuthor().getName());
              book.getAuthor().setId(authorId);
         } else {
             try {
-                book.getAuthor().setId(this.authorsDao.getByName(book.getAuthor().getName()).getId());
+                book.getAuthor().setId(this.authorsDao.getByName(book.getAuthor().getName()).get().getId());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-
-        System.out.println("AUTH = " + book.getAuthor().getId());
 
         for (Genre genre: book.getGenres()) {
             if (this.genresDao.countByName(genre.getName()) == 0) {
                 genre.setId(this.genresDao.insert(genre.getName()));
             } else {
                 try {
-                    genre.setId(this.genresDao.getByName(genre.getName()).getId());
+                    genre.setId(this.genresDao.getByName(genre.getName()).get().getId());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -130,7 +125,7 @@ public class BookServiceImpl implements BookService {
 
     private List<Book> enrichBooks(List<Book> books) {
         for (Book book: books){
-            book.setAuthor(this.authorsDao.getAuthorByBookId(book.getId()));
+            book.setAuthor(this.authorsDao.getAuthorByBookId(book.getId()).get());
             book.setGenres(this.genresDao.getGenresByBookId(book.getId()));
         }
 

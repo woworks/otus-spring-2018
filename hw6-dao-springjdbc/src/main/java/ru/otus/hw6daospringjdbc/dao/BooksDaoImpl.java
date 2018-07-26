@@ -54,8 +54,6 @@ public class BooksDaoImpl implements BooksDao {
             jdbc.update("insert into books_genres (book_id,genre_id) values (:bookId, :genreId)", bookGenresParams);
         }
 
-
-        System.out.println("Book to insert = " + book);
         Map<String, Object> bookAuthorsParams = new HashMap<>(2);
         bookAuthorsParams.put("bookId", book.getId());
         bookAuthorsParams.put("authorId", book.getAuthor().getId());

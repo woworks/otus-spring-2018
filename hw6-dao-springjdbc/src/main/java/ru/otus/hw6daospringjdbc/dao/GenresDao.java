@@ -4,6 +4,7 @@ import ru.otus.hw6daospringjdbc.domain.Genre;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public interface GenresDao {
 
@@ -13,7 +14,7 @@ public interface GenresDao {
 
     Genre getById(long id) throws SQLException;
 
-    Genre getByName(String name) throws SQLException;
+    Optional<Genre> getByName(String name) throws SQLException;
 
     List<Genre> getAll();
 

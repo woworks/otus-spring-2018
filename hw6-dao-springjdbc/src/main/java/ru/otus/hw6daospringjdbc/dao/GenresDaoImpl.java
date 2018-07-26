@@ -11,10 +11,7 @@ import ru.otus.hw6daospringjdbc.domain.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class GenresDaoImpl implements GenresDao {
@@ -56,7 +53,7 @@ public class GenresDaoImpl implements GenresDao {
     }
 
     @Override
-    public Genre getByName(String name) throws SQLException {
+    public Optional<Genre> getByName(String name) throws SQLException {
 
         final Map<String, Object> params = Collections.singletonMap("genreName", name);
 
@@ -64,12 +61,12 @@ public class GenresDaoImpl implements GenresDao {
 
         if (genresList.isEmpty()) {
             System.out.println("Could not find genre with name " + name);
-            return null;
+            return Optional.empty();
         } else if (genresList.size() > 1) {
             throw new SQLException("More than one genre for name " + name);
         }
 
-        return genresList.get(0);
+        return Optional.of(genresList.get(0));
     }
 
     @Override
