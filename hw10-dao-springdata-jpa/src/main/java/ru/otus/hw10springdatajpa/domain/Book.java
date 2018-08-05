@@ -14,13 +14,20 @@ public class Book {
 
     private String title;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.PERSIST })
+    @JoinTable(
+            name = "books_genres",
+            joinColumns = { @JoinColumn(name = "book_id") },
+            inverseJoinColumns = { @JoinColumn(name = "genres_id") }
+    )
     private List<Genre> genres;
 
-    @OneToOne
+    @OneToOne(cascade = { CascadeType.ALL })
     private Author author;
 
-    @ManyToMany
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "book_id")
     private List<Comment> comments;
 
 

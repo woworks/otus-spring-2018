@@ -13,8 +13,6 @@ import java.util.Optional;
 @Repository
 public interface AuthorsDao extends CrudRepository<Author, Long> {
 
-    long countByName(String name);
-
     Optional<Author> getByName(String name) throws SQLException;
 
     List<Author> findAll();

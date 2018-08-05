@@ -58,7 +58,7 @@ public class LibraryCommands {
         }
     }
 
-    @ShellMethod("Display comments for a book or save a comment")
+    @ShellMethod("Display comments for a book or save a comment [list, save]")
     public void comments(@ShellOption(defaultValue = "list") String commentCommand, @ShellOption String bookTitle) {
         switch (commentCommand) {
             case "list":

@@ -1,13 +1,13 @@
 package ru.otus.hw10springdatajpa;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import ru.otus.hw10springdatajpa.config.H2DataSourceConfig;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {H2DataSourceConfig.class})
+@ExtendWith(SpringExtension.class)
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class Hw10springdatajpaApplicationTests {
 
 	@Test

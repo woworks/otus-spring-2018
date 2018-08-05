@@ -1,5 +1,6 @@
 package ru.otus.hw10springdatajpa.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,75 +35,66 @@ class CommentsDaoImplTest {
     @Autowired
     private CommentsDao commentsDao;
 
-    @Autowired
-    private BooksDao booksDao;
+
+    @BeforeEach
+    void cleanComments() {
+        this.entityManager.getEntityManager().createQuery("delete from Comment")
+                .executeUpdate();
+        entityManager.getEntityManager()
+                .createNativeQuery("ALTER TABLE comments ALTER COLUMN id RESTART WITH 1")
+                .executeUpdate();
+        this.entityManager.getEntityManager().createQuery("delete from Book")
+                .executeUpdate();
+    }
 
     @Test
-    void insert() {
-        Author author1 = new Author(AUTHOR);
-        Genre genre1 = new Genre(GENRE);
+    void save() {
 
-        Book book1 = new Book();
-        book1.setTitle(TITLE);
-        book1.setAuthor(author1);
-        book1.setGenres(Collections.singletonList(genre1));
+        Book book = getTestBook();
+        this.entityManager.persist(book);
 
-        this.entityManager.persist(author1);
-        this.entityManager.persist(genre1);
-        this.entityManager.persist(book1);
-        this.entityManager.flush();
-
-        User user = new User();
-        user.setUsername(USERNAME);
-
-        Comment comment = new Comment();
-        comment.setText(COMMENT);
-        comment.setUser(user);
-        comment.setBook(book1);
-
-        book1.setComments(Collections.singletonList(comment));
-
-        this.entityManager.persist(user);
+        Comment comment = getTestComment();
+        comment.setBook(book);
         this.commentsDao.save(comment);
 
-        this.entityManager.flush();
-
         Comment comment2 = this.entityManager.find(Comment.class, 1L);
+
         assertEquals(comment, comment2);
     }
 
     @Test
     void getCommentsByBook() {
-        Author author1 = new Author(AUTHOR);
-        Genre genre1 = new Genre(GENRE);
 
-        Book book1 = new Book();
-        book1.setTitle(TITLE);
-        book1.setAuthor(author1);
-        book1.setGenres(Collections.singletonList(genre1));
+        Book book = getTestBook();
+        this.entityManager.persist(book);
 
-        this.entityManager.persist(author1);
-        this.entityManager.persist(genre1);
-        this.entityManager.persist(book1);
-        this.entityManager.flush();
+        Comment comment = getTestComment();
+        comment.setBook(book);
+        this.commentsDao.save(comment);
 
+        List<Comment> commentList = this.commentsDao.getCommentsByBook(book);
+        assertEquals(comment, commentList.get(0));
+    }
+
+    private static Book getTestBook() {
+        Author author = new Author(AUTHOR);
+        Genre genre = new Genre(GENRE);
+
+        Book book = new Book();
+        book.setTitle(TITLE);
+        book.setAuthor(author);
+        book.setGenres(Collections.singletonList(genre));
+        return book;
+    }
+
+    private static Comment getTestComment() {
         User user = new User();
         user.setUsername(USERNAME);
 
         Comment comment = new Comment();
         comment.setText(COMMENT);
         comment.setUser(user);
-        comment.setBook(book1);
 
-        book1.setComments(Collections.singletonList(comment));
-
-        this.entityManager.persist(user);
-        this.commentsDao.save(comment);
-
-        this.entityManager.flush();
-
-        List<Comment> commentList = this.commentsDao.getCommentsByBook(book1);
-        assertEquals(1, commentList.size());
-        assertEquals(comment, commentList.get(0));
+        return comment;
     }
 }

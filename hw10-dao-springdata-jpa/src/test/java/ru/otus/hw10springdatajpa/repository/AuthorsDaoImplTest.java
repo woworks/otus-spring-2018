@@ -38,19 +38,6 @@ class AuthorsDaoImplTest {
 
 
     @Test
-    void countByName() {
-
-        Author author1 = new Author(NAME);
-
-        this.entityManager.persist(author1);
-        this.entityManager.flush();
-
-        long author1Count = this.authorsDao.countByName(NAME);
-
-        assertEquals(1, author1Count);
-    }
-
-    @Test
     void insert() throws SQLException {
         Author author1 = new Author(NAME);
 

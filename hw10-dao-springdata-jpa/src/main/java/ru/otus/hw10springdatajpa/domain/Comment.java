@@ -13,10 +13,10 @@ public class Comment {
 
     private String text;
 
-    @OneToOne
+    @ManyToOne
     private Book book;
 
-    @OneToOne
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private User user;
 
     public long getId() {
