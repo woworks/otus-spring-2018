@@ -16,7 +16,7 @@ public class Author {
 
     private String name;
 
-    protected Author() {
+    public Author() {
     }
 
     public Author(int id, String name) {
