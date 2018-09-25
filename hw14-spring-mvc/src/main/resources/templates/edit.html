@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all books</title>
+    <!-- Bootstrap core CSS -->
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Books list <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/edit">Add new book</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+<main role="main" class="container">
+
+    <div style="padding-top: 70px">
+        <h1>Edit book</h1>
+    </div>
+
+    <!-- Book edition -->
+    <form class="form-group" th:action="@{/edit(id=${book.id})}" th:method="post" action="edit.html">
+        <h3>Book Info:</h3>
+        <span th:object="${book}">
+            <div class="form-group">
+                <label>ID:</label>
+                <input readonly="readonly" th:value="*{id}" value="123" class="form-control disabled"/>
+            </div>
+
+            <div class="form-group">
+                <label for="holder-input">Title:</label>
+                <input id="holder-input" name="title" type="text" th:value="*{title}" value="War and peace"
+                       class="form-control"/>
+                <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Incorrect title</p>
+            </div>
+
+            <div class="form-group">
+                <label for="holder-input">Author:</label>
+                <select name="authorId" th:field="*{author}" class="form-control">
+                  <option th:each="author : ${allAuthors}"
+                          th:value="${author.id}"
+                          th:text="${author.name}">Alex Pushkin</option>
+                </select>
+            </div>
+
+            <div>
+              <ul>
+              <li th:each="genre : ${allGenres}">
+                <input type="checkbox" th:field="*{genres}" th:value="${genre.id}"/>
+                <label th:for="${'genres' + genre.id}"
+                       th:text="${genre.name}">Comedy</label>
+                  </li>
+                </ul>
+            </div>
+
+            <div class="row">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </span>
+    </form>
+
+
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="../js/bootstrap.js" th:href="@{/js/bootstrap.js}"></script>
+
+</body>
+</html>
+
+
+
