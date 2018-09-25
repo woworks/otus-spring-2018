@@ -68,8 +68,8 @@ public class LibraryCommands {
             return;
         }
 
-        List<Book> books = this.bookService.getBookByTitle(bookTitle);
-        if (books.isEmpty()){
+        Optional<Book> book = this.bookService.getBookByTitle(bookTitle);
+        if (!book.isPresent()){
             System.out.println("No books with title " + bookTitle);
             return;
         }
@@ -103,14 +103,14 @@ public class LibraryCommands {
     private void listComments(String bookTitle) {
 
 
-        List<Book> books = this.bookService.getBookByTitle(bookTitle);
-        if (books.isEmpty()){
+        Optional<Book> book = this.bookService.getBookByTitle(bookTitle);
+        if (!book.isPresent()){
             System.out.println("No book with this title found. Please try another title.");
             return;
         }
 
         System.out.printf("%15s| %50s %n", "Username", "Comment");
-        books.get(0).getComments().forEach(comment -> System.out.printf("%15s| %50s %n", comment.getUser(), comment.getText()));
+        book.get().getComments().forEach(comment -> System.out.printf("%15s| %50s %n", comment.getUser(), comment.getText()));
     }
 
     private void listByAuthor(String author){

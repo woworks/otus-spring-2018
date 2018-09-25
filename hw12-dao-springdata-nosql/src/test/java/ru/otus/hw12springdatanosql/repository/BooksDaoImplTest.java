@@ -13,6 +13,7 @@ import ru.otus.hw12springdatanosql.domain.Comment;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,11 +48,11 @@ class BooksDaoImplTest {
 
         Book book2 = this.bookRepository.save(book1);
 
-        List<Book> book3 = this.bookRepository.findByTitle(TITLE1);
+        Optional<Book> book3 = this.bookRepository.findByTitle(TITLE1);
 
         assertEquals(book1, book2);
-        assert book3.size() == 1;
-        assertEquals(book1, book3.get(0));
+        assertTrue(book3.isPresent());
+        assertEquals(book1, book3.get());
     }
 
 
@@ -76,8 +77,8 @@ class BooksDaoImplTest {
 
         List<Book> books = this.bookRepository.findAll();
 
-        assert books.size() == 2;
-        assert books.containsAll(bookList);
+        assertEquals(books.size(), 2);
+        assertTrue(books.containsAll(bookList));
 
     }
 
@@ -100,10 +101,10 @@ class BooksDaoImplTest {
         bookList.add(book2);
 
 
-        List<Book> books = this.bookRepository.findByGenre(GENRE1);
+        List<Book> books = this.bookRepository.findByGenres(GENRE1);
 
-        assert books.size() == 1;
-        assert books.get(0).equals(book1);
+        assertEquals(books.size(), 1);
+        assertEquals(books.get(0), book1);
 
     }
 
@@ -128,8 +129,8 @@ class BooksDaoImplTest {
 
         List<Book> books = this.bookRepository.findByAuthor(AUTHOR1);
 
-        assert books.size() == 1;
-        assert books.get(0).equals(book1);
+        assertEquals(books.size(), 1);
+        assertEquals(books.get(0), book1);
 
     }
 
@@ -152,10 +153,10 @@ class BooksDaoImplTest {
 
         List<Book> books = this.bookRepository.findByAuthor(AUTHOR1);
 
-        assert books.size() == 1;
-        assert books.get(0).getComments().size() == 1;
-        assert books.get(0).getComments().get(0).getText().equals("Text1");
-        assert books.get(0).getComments().get(0).getUser().equals("User1");
+        assertEquals(books.size(), 1);
+        assertEquals(books.get(0).getComments().size(), 1);
+        assertEquals(books.get(0).getComments().get(0).getText(), "Text1");
+        assertEquals(books.get(0).getComments().get(0).getUser(),"User1");
 
     }
 

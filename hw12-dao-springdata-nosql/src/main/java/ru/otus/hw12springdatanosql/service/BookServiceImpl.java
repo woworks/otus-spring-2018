@@ -7,6 +7,7 @@ import ru.otus.hw12springdatanosql.domain.Comment;
 import ru.otus.hw12springdatanosql.repository.BookRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -51,22 +52,18 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getBooksByGenre(String genre) {
-        return this.bookRepository.findByGenre(genre);
+        return this.bookRepository.findByGenres(genre);
     }
 
     @Override
-    public List<Book> getBookByTitle(String title) {
+    public Optional<Book> getBookByTitle(String title) {
         return this.bookRepository.findByTitle(title);
     }
 
     @Override
     public void addComment(String title, String username, String text) {
-        List<Book> books = this.getBookByTitle(title);
-        if (books.isEmpty()){
-            System.out.println("No books with title " + title);
-            return;
-        }
-        Book book = books.get(0);
+        Optional<Book> books = this.getBookByTitle(title);
+        Book book = books.get();
         Comment comment = new Comment();
         comment.setUser(username);
         comment.setText(text);

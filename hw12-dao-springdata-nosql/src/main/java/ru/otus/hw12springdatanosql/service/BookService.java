@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.otus.hw12springdatanosql.domain.Book;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface BookService {
@@ -22,7 +23,7 @@ public interface BookService {
 
     List<Book> getBooksByGenre(String genre);
 
-    List<Book> getBookByTitle(String name);
+    Optional<Book> getBookByTitle(String name);
 
     void addComment(String bookTitle, String username, String comment);
 }
