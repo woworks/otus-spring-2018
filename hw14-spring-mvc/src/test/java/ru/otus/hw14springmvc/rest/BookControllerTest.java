@@ -28,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(PersonController.class)
-class PersonControllerTest {
+@WebMvcTest(BookController.class)
+class BookControllerTest {
 
     private static final String AUTHOR = "Charles Dickens";
     private static final String TITLE = "Oliver Twist";
@@ -92,26 +92,18 @@ class PersonControllerTest {
 
     @Test
     void listPage() throws Exception {
-                boolean hasBookTitle = mvc.perform(get("/"))
+                mvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString()
-                .contains(TITLE);
-
-                assertTrue(hasBookTitle);
+                .andExpect(view().name("list"))
+                .andExpect(model().attributeExists("books"));
     }
 
     @Test
     void editPageGet() throws Exception {
-        boolean hasBookTitle = mvc.perform(get("/edit").param("id", "1"))
+        mvc.perform(get("/edit").param("id", "1"))
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString()
-                .contains(TITLE);
-
-        assertTrue(hasBookTitle);
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeExists("book"));
     }
 
     @Test
@@ -123,13 +115,10 @@ class PersonControllerTest {
         params.put("author", Collections.singletonList("1"));
         params.put("genres", Collections.singletonList("1"));
 
-        boolean hasBookTitle = mvc.perform(post("/edit").params(params))
+        mvc.perform(post("/edit").params(params))
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString()
-                .contains(NEW_TITLE);
+                .andExpect(view().name("list"))
+                .andExpect(model().attributeExists("books"));
 
-        assertTrue(hasBookTitle);
     }
 }

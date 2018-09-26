@@ -17,14 +17,14 @@ import ru.otus.hw14springmvc.service.GenreService;
 import java.util.List;
 
 @Controller
-public class PersonController {
+public class BookController {
 
     private final BookService bookService;
     private final AuthorService authorService;
     private final GenreService genreService;
 
     @Autowired
-    public PersonController(BookService bookService, AuthorService authorService, GenreService genreService) {
+    public BookController(BookService bookService, AuthorService authorService, GenreService genreService) {
         this.bookService = bookService;
         this.authorService = authorService;
         this.genreService = genreService;
