@@ -65,7 +65,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getBooksByGenre(Genre genre) {
-        return this.booksDao.findByGenre(genre);
+        return this.booksDao.findByGenres(genre);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class BookServiceImpl implements BookService {
             return Collections.emptyList();
         }
 
-        List<Book> books = this.booksDao.findByGenre(genre.get());
+        List<Book> books = this.booksDao.findByGenres(genre.get());
         return this.enrichBooks(books);
     }
 

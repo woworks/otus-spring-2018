@@ -19,20 +19,17 @@ public class BookController {
     }
 
     @GetMapping("api/books")
-    @ResponseBody
-    public List<Book> listPage() {
+    public List<Book> listBooks() {
          return bookService.findAll();
     }
 
     @GetMapping("api/books/{id}")
-    @ResponseBody
-    public Book editPage(@PathVariable Long id) {
+    public Book editBooks(@PathVariable Long id) {
             return bookService.findById(id).orElseThrow(NotFoundException::new);
     }
 
-    @PostMapping(value = "api/books/{id}")
-    @ResponseBody
-    public Book editPage(@PathVariable Long id, @RequestBody Book book) {
+    @PostMapping(value = "api/books")
+    public Book editBook(@PathVariable Long id, @RequestBody Book book) {
         Book returnBook = this.bookService.save(book);
         return returnBook;
     }

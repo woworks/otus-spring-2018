@@ -13,8 +13,7 @@ import java.util.Optional;
 @Repository
 public interface BooksDao extends CrudRepository<Book,Long> {
 
-    @Query("select b from Book b where ?1 member of b.genres")
-    List<Book> findByGenre(Genre genre);
+    List<Book> findByGenres(Genre genre);
 
     Optional<Book> findByTitle(String title);
 

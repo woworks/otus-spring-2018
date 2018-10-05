@@ -98,7 +98,7 @@ class BooksDaoImplTest {
         this.booksDao.save(book1);
         this.entityManager.flush();
 
-        List<Book> bookList = this.booksDao.findByGenre(genre1);
+        List<Book> bookList = this.booksDao.findByGenres(genre1);
 
         assertEquals(1, bookList.size());
         assertEquals(book1, bookList.get(0));
