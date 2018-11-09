@@ -20,8 +20,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw23springbatch.config.BatchConfig;
+import ru.otus.hw23springbatch.domain.mongo.MBook;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @DataMongoTest
@@ -43,6 +47,10 @@ public class BatchJobTest {
         this.mongoTemplate.dropCollection("books");
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+
+        List<MBook> mongoBooks = this.mongoTemplate.findAll(MBook.class);
         assertEquals("COMPLETED", jobExecution.getExitStatus().getExitCode());
+        assertEquals(5, mongoBooks.size());
+        assertTrue(mongoBooks.get(0).getTitle().contains("War and peace"));
     }
 }
