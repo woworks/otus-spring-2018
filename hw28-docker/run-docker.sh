@@ -1,0 +1,1 @@
+docker run --detach --publish 8080:8080 --name hw28docker hw28docker:0.0.1-SNAPSHOT
