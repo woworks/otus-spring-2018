@@ -1,0 +1,43 @@
+version: '3'
+services:
+  # Define the hw28docker web application
+  hw28docker:
+
+    # Build the Dockerfile that is in the current directory
+    build: .
+
+    # Always restart the container regardless of the exit status; try and restart the container indefinitely
+    restart: always
+
+    # Expose port 8080 as 8081
+    ports:
+    - "8081:8080"
+
+    # Don't create this container until the redis and postgres containers (below) have been created
+    depends_on:
+    - postgres
+
+    # Link postgres container together so that they can talk to one another
+    links:
+    - postgres
+
+  # Define the postgres database
+  postgres:
+    restart: always
+    # Use the postgres alpine image: https://hub.docker.com/_/postgres/
+    image: postgres:alpine
+
+    # Mount an initialization script and the persistent postgresql data volume
+    volumes:
+    #- ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    - ../target/postgres/data:/var/lib/postgresql/data
+
+    # Pass postgres environment variables
+    environment:
+      POSTGRES_USER: hw28docker
+      POSTGRES_PASSWORD: hw28docker
+      POSTGRES_DB: hw28docker
+
+    # Expose port 5432 as 54321 to external
+    ports:
+    - "54321:5432"
